@@ -13,7 +13,7 @@ export function generateRandomPiece(): TetrominoShape {
 
 export function createTetromino(
   shape: TetrominoShape,
-  position: Position = { x: 3, y: 0 }
+  position: Position = { x: 4, y: 0 }
 ): Tetromino {
   return {
     shape,

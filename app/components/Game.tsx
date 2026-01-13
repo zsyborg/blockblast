@@ -5,12 +5,14 @@ import { GameState, GameStatus } from '../types/GameState';
 import { getDefaultSettings, createEmptyBoard, generateRandomPiece, createTetromino, dropPiece } from '../utils/gameLogic';
 import { getDropSpeed } from '../utils/scoring';
 import { useKeyboardControls } from '../hooks/useKeyboardControls';
+import { getAvailableSkins } from '../utils/tileLoader';
 import GameBoard from './GameBoard';
 import Tetromino from './Tetromino';
 import ScorePanel from './ScorePanel';
 
 const Game: React.FC = () => {
   const dropIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
 
   const [gameState, setGameState] = useState<GameState>(() => {
     const settings = getDefaultSettings();
@@ -78,7 +80,7 @@ const Game: React.FC = () => {
         </div>
 
         {/* Center - Game board */}
-        <div className="relative">
+        <div className="relative border-2 border-gray-400">
           <GameBoard board={gameState.board} skin={gameState.settings.skin} />
           {gameState.currentPiece && gameState.status === 'playing' && (
             <Tetromino piece={gameState.currentPiece} skin={gameState.settings.skin} />
@@ -87,9 +89,50 @@ const Game: React.FC = () => {
 
         {/* Right side - Next pieces, etc. */}
         <div className="flex flex-col gap-4">
-          {/* TODO: Add next queue, settings button, etc. */}
+          <button
+            onClick={() => setShowSettings(true)}
+            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+          >
+            Settings
+          </button>
+          {/* TODO: Add next queue, etc. */}
         </div>
       </div>
+
+      {showSettings && (
+        <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center z-10">
+          <div className="bg-black p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Settings</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2 text-white">Tile Skin</label>
+              <div className="flex gap-2">
+                {getAvailableSkins().map(skin => (
+                  <button
+                    key={skin}
+                    onClick={() => setGameState(prev => ({
+                      ...prev,
+                      settings: { ...prev.settings, skin }
+                    }))}
+                    className={`px-4 py-2 rounded ${
+                      gameState.settings.skin === skin
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-600 text-white hover:bg-gray-500'
+                    }`}
+                  >
+                    {skin.charAt(0).toUpperCase() + skin.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <button
+              onClick={() => setShowSettings(false)}
+              className="px-4 py-2 bg-blue-600 text-black rounded hover:bg-blue-700"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       {gameState.status === 'menu' && (
         <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center">

@@ -12,13 +12,13 @@ interface GameBoardProps {
 
 const GameBoard: React.FC<GameBoardProps> = ({ board, skin }) => {
   return (
-    <div className="game-board grid gap-0 border-2 border-gray-400 bg-black p-1">
+    <div className="game-board grid gap-0 bg-black">
       {board.map((row, y) => (
         <div key={y} className="flex">
           {row.map((cell, x) => (
             <div
               key={`${x}-${y}`}
-              className="w-6 h-6 border border-gray-600 flex items-center justify-center"
+              className="w-6 h-6 flex items-center justify-center"
             >
               {cell && (
                 <Image
